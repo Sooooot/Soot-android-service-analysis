@@ -2,6 +2,8 @@ package com.csx.soot.core;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ws.StringWebSocketClient;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -47,7 +49,7 @@ public class AppiumTest {
         }
         StringWebSocketClient logcat = driver.getLogcatClient();
 
-        driver.findElementById("com.example.jyunmauchan.startservicetest:id/startService").click();
+        List elements = driver.findElementsById("com.example.jyunmauchan.startservicetest");
         LogEntries logEntries = driver.manage().logs().get("logcat");
         for (LogEntry logEntry : logEntries) {
             if (logEntry.getMessage().contains("invoke")){
@@ -55,8 +57,6 @@ public class AppiumTest {
             }
         }
         Thread.sleep(500);
-
-
 
     }
 
