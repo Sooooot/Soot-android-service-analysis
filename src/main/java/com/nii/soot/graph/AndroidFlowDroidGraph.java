@@ -16,7 +16,7 @@ public class AndroidFlowDroidGraph
     /**
      * apk路径
      */
-    private String apkPath = "H:\\JAVA\\Soot\\apk\\app-debug.apk";
+    private String apkPath = "D:\\app-debug.apk";
 
     /**
      * android jar路径

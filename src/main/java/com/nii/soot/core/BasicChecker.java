@@ -23,7 +23,7 @@ public abstract class BasicChecker implements IChecker
     /**
      * apk路径
      */
-    protected String apkPath = "H:\\JAVA\\Soot\\apk\\app-debug.apk";
+    protected String apkPath = "D:\\app-debug.apk";
 
     /**
      * android jar路径

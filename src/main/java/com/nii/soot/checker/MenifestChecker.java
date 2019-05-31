@@ -14,7 +14,7 @@ public class MenifestChecker
     /**
      * apk路径
      */
-    private static String apkPath = "H:\\JAVA\\Soot\\apk\\clock.apk";
+    private static String apkPath = "D:\\app-debug.apk";
 
     public static void main(String[] args) throws IOException, XmlPullParserException
     {
