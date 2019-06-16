@@ -1,4 +1,4 @@
-package com.csx.soot.core;
+package com.csx.soot.core.appium;
 
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ws.StringWebSocketClient;
@@ -24,15 +24,28 @@ import java.util.concurrent.TimeUnit;
  */
 public class AppiumTest {
     public static void main(String[] args) throws Exception{
+//
+//        List elements = driver.findElementsById("com.example.jyunmauchan.startservicetest");
+//        LogEntries logEntries = driver.manage().logs().get("logcat");
+//        for (LogEntry logEntry : logEntries) {
+//            if (logEntry.getMessage().contains("invoke") || logEntry.getMessage().contains("HELLO")){
+//                System.out.println(logEntry.toString());
+//            }
+//        }
+//        Thread.sleep(500);
+
+    }
+
+    public void startTest(){
         DesiredCapabilities cap = new DesiredCapabilities();
         AndroidDriver driver = null;
 
-        cap.setCapability("automationName", "Appium");
-        cap.setCapability("app", "D:\\ServiceTest-V1.apk");
+        cap.setCapability("automationName", "uiautomator2");
+        cap.setCapability("app", "D:\\ServiceTest-V1-new.apk");
         cap.setCapability("deviceName", "test");
         cap.setCapability("platformName", "Android");
-        cap.setCapability("platformVersion", "7.1");
-        cap.setCapability("udid", "192.168.194.101:5555");
+        cap.setCapability("platformVersion", "9.0");
+        cap.setCapability("udid", "192.168.194.102:5555");
         cap.setCapability("appPackage", "com.example.jyunmauchan.startservicetest");
         cap.setCapability("appActivity", ".MainActivity");
         cap.setCapability("unicodeKeyboard", true);
@@ -45,19 +58,7 @@ public class AppiumTest {
             driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         } catch (Exception e){
             e.printStackTrace();
-            return;
         }
-        StringWebSocketClient logcat = driver.getLogcatClient();
-
-        List elements = driver.findElementsById("com.example.jyunmauchan.startservicetest");
-        LogEntries logEntries = driver.manage().logs().get("logcat");
-        for (LogEntry logEntry : logEntries) {
-            if (logEntry.getMessage().contains("invoke")){
-                System.out.println(logEntry.toString());
-            }
-        }
-        Thread.sleep(500);
-
     }
 
 }

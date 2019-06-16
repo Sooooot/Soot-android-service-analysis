@@ -18,14 +18,14 @@ public class MenifestChecker
 
     public static void main(String[] args) throws IOException, XmlPullParserException
     {
-        ProcessManifest processManifest = new ProcessManifest(apkPath);
-
-        //获取包名
-        System.out.println(processManifest.getManifest().getAttribute("package"));
-
-        System.out.println(processManifest.getPermissions());
-        System.out.println(processManifest.getActivities());
-        System.out.println(processManifest.getServices());
-        System.out.println(processManifest.getProviders());
+//        ProcessManifest processManifest = new ProcessManifest(apkPath);
+//
+//        //获取包名
+//        System.out.println(processManifest.getManifest().getAttribute("package"));
+//
+//        System.out.println(processManifest.getPermissions());
+//        System.out.println(processManifest.getActivities());
+//        System.out.println(processManifest.getServices());
+//        System.out.println(processManifest.getProviders());
     }
 }
