@@ -20,10 +20,10 @@ import java.util.Map;
  */
 public class ManifestChecker {
 
-    public Map<String, List<String>> getManifest(String apkPath){
+    public static Map<String, List<String>> getManifest(String apkPath){
         Map<String, List<String>> result = new HashMap<String, List<String>>();
         try{
-            ProcessManifest processManifest = new ProcessManifest("D:\\ServiceTest-V1.apk");
+            ProcessManifest processManifest = new ProcessManifest(apkPath);
 
             //获取包名
             //System.out.println(processManifest.getManifest().getAttribute("package"));

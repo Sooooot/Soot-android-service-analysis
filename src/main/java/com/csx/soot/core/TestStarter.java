@@ -1,5 +1,11 @@
 package com.csx.soot.core;
 
+import com.csx.soot.core.soot.ManifestChecker;
+import com.csx.soot.core.soot.SootCore;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>Title: TestStarter</p>
  * <p>Description: </p>
@@ -11,7 +17,13 @@ package com.csx.soot.core;
  * @date 2019/6/16 10:35
  */
 public class TestStarter {
+    //程序分析入口点
     public static void main(String[] args){
+        String apkPath = "D:\\ServiceTest-V1.apk";
+
+        //静态分析阶段
+        Map<String, List<String>> map = ManifestChecker.getManifest(apkPath);
+        SootCore.runSoot(map);
 
     }
 }

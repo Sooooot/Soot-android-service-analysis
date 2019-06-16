@@ -24,19 +24,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class AppiumTest {
     public static void main(String[] args) throws Exception{
-//
-//        List elements = driver.findElementsById("com.example.jyunmauchan.startservicetest");
-//        LogEntries logEntries = driver.manage().logs().get("logcat");
-//        for (LogEntry logEntry : logEntries) {
-//            if (logEntry.getMessage().contains("invoke") || logEntry.getMessage().contains("HELLO")){
-//                System.out.println(logEntry.toString());
-//            }
-//        }
-//        Thread.sleep(500);
-
+        startTest();
     }
 
-    public void startTest(){
+    public static void startTest() throws Exception{
         DesiredCapabilities cap = new DesiredCapabilities();
         AndroidDriver driver = null;
 
@@ -55,10 +46,19 @@ public class AppiumTest {
 
         try{
             driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), cap);
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
         } catch (Exception e){
             e.printStackTrace();
         }
+        Thread.sleep(5000);
+
+        LogEntries logEntries = driver.manage().logs().get("logcat");
+        for (LogEntry logEntry : logEntries) {
+            if (logEntry.getMessage().contains("SootTest")){
+                System.out.println(logEntry.toString());
+            }
+        }
+
     }
 
 }
