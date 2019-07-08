@@ -37,7 +37,8 @@ public class SootCore {
 
     public static void runSoot(Map<String, List<String>> map){
         sootInit();
-        SootServiceMethodInsertion.insertTest(map);
+        SootServiceMethodInsertion.serviceInsertion(map);
+        SootServiceMethodInsertion.activityCheck(map);
         PackManager.v().runPacks();
         PackManager.v().writeOutput();
     }
