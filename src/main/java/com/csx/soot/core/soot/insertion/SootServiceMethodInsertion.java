@@ -1,5 +1,6 @@
-package com.csx.soot.core.soot;
+package com.csx.soot.core.soot.insertion;
 
+import com.csx.soot.core.soot.util.GlobalUtil;
 import soot.*;
 import soot.jimple.*;
 import soot.jimple.internal.ImmediateBox;
@@ -21,8 +22,6 @@ import java.util.Map;
  */
 public class SootServiceMethodInsertion {
 
-    private static final SootMethod SYSTEM_OUT_TO_CALL = Scene.v().getSootClass("java.io.PrintStream")
-            .getMethod("void println(java.lang.String)");
     private static String insertString;
 
     public static void serviceInsertion(final Map<String, List<String>> manifestMap) {
@@ -34,9 +33,7 @@ public class SootServiceMethodInsertion {
                     System.out.println("Find service: " + body.getMethod().getDeclaringClass().getName());
                     System.out.println("Inserting: " + body.getMethod().getName());
 
-                    //建立本地变量（未赋值）
-                    Local tmpIORef = addTmpRef(body);
-                    Local tmpString = addTmpString(body);
+                    Chain<Local> locals = body.getLocals();
 
                     //获取一个方法体内的所有语句
                     Chain<Unit> units = body.getUnits();
@@ -47,7 +44,7 @@ public class SootServiceMethodInsertion {
                             //建立IO库与tempIORef的引用
                             insertString = "SootTest: " + body.getMethod().getDeclaringClass().getName()
                                     + "." + body.getMethod().getName() + " ENTERED";
-                            insertSystemOut(insertString, body, unit);
+                            GlobalUtil.insertSystemOut(insertString, body, unit);
                             break;
                         }
 
@@ -56,7 +53,7 @@ public class SootServiceMethodInsertion {
                     //建立注入语句与temp的引用
                     insertString = "SootTest: " + body.getMethod().getDeclaringClass().getName()
                             + "." + body.getMethod().getName() + " FINISHED";
-                    insertSystemOut(insertString, body, units.getLast());
+                    GlobalUtil.insertSystemOut(insertString, body, units.getLast());
 
                     //验证注入是否合法，否则不准许执行
                     body.validate();
@@ -111,7 +108,7 @@ public class SootServiceMethodInsertion {
 
                                                                     // insertion
                                                                     insertString = "SootTest: " + serviceName + " INVOKED";
-                                                                    insertSystemOut(insertString, body, stmt);
+                                                                    GlobalUtil.insertSystemOut(insertString, body, stmt);
 
 
                                                                 }
@@ -134,29 +131,5 @@ public class SootServiceMethodInsertion {
         }));
     }
 
-    //用于构建sout中临时变量的方法
 
-    private static Local addTmpRef(Body body) {
-        Local tmpRef = Jimple.v().newLocal("tmpRef", RefType.v("java.io.PrintStream"));
-        body.getLocals().add(tmpRef);
-        return tmpRef;
-    }
-
-    private static Local addTmpString(Body body) {
-        Local tmpString = Jimple.v().newLocal("tmpString", RefType.v("java.lang.String"));
-        body.getLocals().add(tmpString);
-        return tmpString;
-    }
-
-    private static synchronized void insertSystemOut(String insertString, Body body, Unit unit) {
-
-        Chain<Unit> units = body.getUnits();
-
-        Local IORef = addTmpRef(body);
-        Local stringRef = addTmpString(body);
-        units.insertBefore(Jimple.v().newAssignStmt(stringRef, StringConstant.v(insertString)), unit);
-        units.insertBefore(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(IORef,
-                SYSTEM_OUT_TO_CALL.makeRef()
-                , stringRef)), unit);
-    }
 }

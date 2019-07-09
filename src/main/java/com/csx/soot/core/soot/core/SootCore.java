@@ -1,12 +1,12 @@
-package com.csx.soot.core.soot;
+package com.csx.soot.core.soot.core;
 
+import com.csx.soot.core.soot.insertion.SootServiceMethodInsertion;
+import com.csx.soot.core.soot.manifest.ManifestChecker;
 import soot.PackManager;
 import soot.Scene;
 import soot.options.Options;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>Title: SootCore</p>
@@ -18,7 +18,7 @@ import java.util.Map;
  * @version V1.0
  * @date 2019/6/2 13:23
  */
-public class SootCore {
+public class SootCore implements SootTester {
     private final static String androidPath = "D:\\AndroidSDK\\platforms";
     private final static String apkPath = "D:\\ServiceTest-V1.apk";
     private final static String outputPath = "./sootoutput";
@@ -35,10 +35,11 @@ public class SootCore {
         Scene.v().loadNecessaryClasses();
     }
 
-    public static void runSoot(Map<String, List<String>> map){
+    public void runSoot(String apkPath){
         sootInit();
-        SootServiceMethodInsertion.serviceInsertion(map);
-        SootServiceMethodInsertion.activityCheck(map);
+
+        SootServiceMethodInsertion.serviceInsertion(ManifestChecker.getManifest(apkPath));
+        // SootServiceMethodInsertion.activityCheck(map);
         PackManager.v().runPacks();
         PackManager.v().writeOutput();
     }

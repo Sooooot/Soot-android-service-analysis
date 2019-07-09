@@ -1,4 +1,4 @@
-package com.csx.soot.core.soot;
+package com.csx.soot.core.soot.manifest;
 
 import soot.jimple.infoflow.android.axml.AXmlNode;
 import soot.jimple.infoflow.android.manifest.ProcessManifest;

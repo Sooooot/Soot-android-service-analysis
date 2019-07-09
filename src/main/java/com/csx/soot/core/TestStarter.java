@@ -1,10 +1,6 @@
 package com.csx.soot.core;
 
-import com.csx.soot.core.soot.ManifestChecker;
-import com.csx.soot.core.soot.SootCore;
-
-import java.util.List;
-import java.util.Map;
+import com.csx.soot.core.soot.core.SootCore;
 
 /**
  * <p>Title: TestStarter</p>
@@ -22,8 +18,9 @@ public class TestStarter {
         String apkPath = "D:\\ServiceTest-V1.apk";
 
         //静态分析阶段
-        Map<String, List<String>> map = ManifestChecker.getManifest(apkPath);
-        SootCore.runSoot(map);
+        // Map<String, List<String>> map = ManifestChecker.getManifest(apkPath);
+        SootCore sootCore = new SootCore();
+        sootCore.runSoot(apkPath);
 
     }
 }
