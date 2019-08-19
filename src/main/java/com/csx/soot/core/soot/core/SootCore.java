@@ -1,12 +1,15 @@
 package com.csx.soot.core.soot.core;
 
-import com.csx.soot.core.soot.insertion.SootServiceMethodInsertion;
+import com.csx.soot.core.soot.insertion.ActivityInsertion;
+import com.csx.soot.core.soot.insertion.ServiceInsertion;
 import com.csx.soot.core.soot.manifest.ManifestChecker;
 import soot.PackManager;
 import soot.Scene;
 import soot.options.Options;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>Title: SootCore</p>
@@ -38,7 +41,10 @@ public class SootCore implements SootTester {
     public void runSoot(String apkPath){
         sootInit();
 
-        SootServiceMethodInsertion.serviceInsertion(ManifestChecker.getManifest(apkPath));
+        Map<String, List<String>> manifestMap = ManifestChecker.getManifest(apkPath);
+
+        ServiceInsertion.serviceInsertion(manifestMap);
+        ActivityInsertion.activityCheck(manifestMap);
         // SootServiceMethodInsertion.activityCheck(map);
         PackManager.v().runPacks();
         PackManager.v().writeOutput();
