@@ -1,5 +1,8 @@
 package com.csx.soot.core.soot.core;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>Title: SootTester</p>
  * <p>Description: </p>
@@ -11,5 +14,5 @@ package com.csx.soot.core.soot.core;
  * @date 2019/7/9 15:40
  */
 public interface SootTester {
-    void runSoot(String apkPath);
+    Map<String, List<String>> runSoot(String apkPath);
 }

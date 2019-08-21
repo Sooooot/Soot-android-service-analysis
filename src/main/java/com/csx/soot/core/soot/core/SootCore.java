@@ -38,15 +38,23 @@ public class SootCore implements SootTester {
         Scene.v().loadNecessaryClasses();
     }
 
-    public void runSoot(String apkPath){
+    public Map<String, List<String>> runSoot(String apkPath){
+
+        // 初始化Soot
         sootInit();
 
+        // 生成ManifestMap
         Map<String, List<String>> manifestMap = ManifestChecker.getManifest(apkPath);
 
+        // 服务插装
         ServiceInsertion.serviceInsertion(manifestMap);
-        ActivityInsertion.activityCheck(manifestMap);
+        // ActivityInsertion.activityCheck(manifestMap);
         // SootServiceMethodInsertion.activityCheck(map);
+
+        // 执行soot并输出
         PackManager.v().runPacks();
         PackManager.v().writeOutput();
+
+        return manifestMap;
     }
 }
