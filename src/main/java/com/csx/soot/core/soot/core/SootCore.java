@@ -21,7 +21,7 @@ import java.util.Map;
  * @version V1.0
  * @date 2019/6/2 13:23
  */
-public class SootCore implements SootTester {
+public class SootCore{
     private final static String androidPath = "D:\\AndroidSDK\\platforms";
     private final static String apkPath = "D:\\ServiceTest-V1.apk";
     private final static String outputPath = "./sootoutput";
@@ -38,7 +38,7 @@ public class SootCore implements SootTester {
         Scene.v().loadNecessaryClasses();
     }
 
-    public Map<String, List<String>> runSoot(String apkPath){
+    public Map<String, List<String>> runSoot(String apkPath, Map<String, String> checkMap){
 
         // 初始化Soot
         sootInit();
@@ -47,7 +47,7 @@ public class SootCore implements SootTester {
         Map<String, List<String>> manifestMap = ManifestChecker.getManifest(apkPath);
 
         // 服务插装
-        ServiceInsertion.serviceInsertion(manifestMap);
+        checkMap = ServiceInsertion.serviceInsertion(manifestMap);
         // ActivityInsertion.activityCheck(manifestMap);
         // SootServiceMethodInsertion.activityCheck(map);
 

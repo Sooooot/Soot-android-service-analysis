@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class AppiumTest {
 
-    public static void startTest(Map<String, List<String>> manifestMap) throws Exception{
+    public static void startTest(Map<String, List<String>> manifestMap, Map<String, String> checkMap) throws Exception{
         DesiredCapabilities cap = new DesiredCapabilities();
         AndroidDriver driver = null;
 
@@ -67,19 +67,21 @@ public class AppiumTest {
                     mobileElement.click();
                 }
             }
-
+            // TODO 暂停一段时间
 
 
             // 分析日志
             LogEntries logEntries = driver.manage().logs().get("logcat");
             for (LogEntry logEntry : logEntries) {
-                if (logEntry.getMessage().contains("SootTest")){
-                    System.out.println(logEntry.toString());
+                String logString = logEntry.getMessage();
+                if (logString.contains("SootTest")){
+                    String[] strings = logString.split(" ");
+                    checkMap.put(strings[1], strings[2]);
                 }
             }
         }
 
-
+        System.out.println("Checking rates: ");
 
 
     }

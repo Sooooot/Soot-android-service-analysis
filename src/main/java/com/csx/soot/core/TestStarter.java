@@ -3,8 +3,11 @@ package com.csx.soot.core;
 import com.csx.soot.core.appium.AppiumTest;
 import com.csx.soot.core.soot.core.SootCore;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import fj.Hash;
 
 /**
  * <p>Title: TestStarter</p>
@@ -26,9 +29,10 @@ public class TestStarter {
         SootCore sootCore = new SootCore();
 
         // 获取manifestMap并产生app文件
-        Map<String, List<String>> manifestMap = sootCore.runSoot(apkPath);
+        Map<String, String> checkMap = new HashMap<String, String>();
+        Map<String, List<String>> manifestMap = sootCore.runSoot(apkPath, checkMap);
 
-        AppiumTest.startTest(manifestMap);
+        AppiumTest.startTest(manifestMap, checkMap);
 
     }
 }

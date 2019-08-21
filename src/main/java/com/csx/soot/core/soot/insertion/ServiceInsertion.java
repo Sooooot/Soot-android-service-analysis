@@ -7,6 +7,7 @@ import soot.jimple.internal.ImmediateBox;
 import soot.jimple.internal.JimpleLocalBox;
 import soot.util.Chain;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,8 @@ public class ServiceInsertion {
 
     private static String insertString;
 
-    public static void serviceInsertion(final Map<String, List<String>> manifestMap) {
+    public static Map<String, String> serviceInsertion(final Map<String, List<String>> manifestMap) {
+        final Map<String, String> methodMap = new HashMap<String, String>();
         PackManager.v().getPack("jtp").add(new Transform("jtp.my.service.insertion", new BodyTransformer() {
             @Override
             protected void internalTransform(Body body, String s, Map<String, String> map) {
@@ -53,11 +55,14 @@ public class ServiceInsertion {
                             + "." + body.getMethod().getName() + " FINISHED";
                     GlobalUtil.insertSystemOut(insertString, body, units.getLast());
 
+                    methodMap.put(body.getMethod().getDeclaringClass().getName() + "." + body.getMethod().getName(), "UNREACHED");
+
                     //验证注入是否合法，否则不准许执行
                     body.validate();
                 }
             }
         }));
+        return methodMap;
     }
 
 
