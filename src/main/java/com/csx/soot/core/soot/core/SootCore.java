@@ -1,6 +1,6 @@
 package com.csx.soot.core.soot.core;
 
-import com.csx.soot.core.soot.insertion.ActivityInsertion;
+import com.csx.soot.core.soot.insertion.NewActivityInsertion;
 import com.csx.soot.core.soot.insertion.ServiceInsertion;
 import com.csx.soot.core.soot.manifest.ManifestChecker;
 import soot.PackManager;
@@ -19,7 +19,6 @@ import java.util.Map;
  *
  * @author Zwiebeln_Chan
  * @version V1.0
- * @date 2019/6/2 13:23
  */
 public class SootCore{
     private final static String androidPath = "D:\\AndroidSDK\\platforms";
@@ -46,10 +45,13 @@ public class SootCore{
         // 生成ManifestMap
         Map<String, List<String>> manifestMap = ManifestChecker.getManifest(apkPath);
 
-        // 服务插装
-        ServiceInsertion.serviceInsertion(manifestMap, checkMap);
-        ActivityInsertion.activityCheck(manifestMap);
-        // SootServiceMethodInsertion.activityCheck(map);
+        NewActivityInsertion newActivityInsertion = new NewActivityInsertion();
+        ServiceInsertion serviceInsertion = new ServiceInsertion();
+
+        // Activity插装
+        newActivityInsertion.activityInsertion(manifestMap);
+        // Service插装
+        serviceInsertion.serviceInsertion(manifestMap, checkMap);
 
         // 执行soot并输出
         PackManager.v().runPacks();

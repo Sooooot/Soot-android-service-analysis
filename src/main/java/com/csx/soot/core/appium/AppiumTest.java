@@ -22,15 +22,15 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Zwiebeln_Chan
  * @version V1.0
- * @date 2019/5/30 20:43
  */
 public class AppiumTest {
 
-    public static void startTest(Map<String, List<String>> manifestMap, Map<String, String> checkMap) throws Exception{
+    public static void startTest(Map<String, List<String>> manifestMap, Map<String, String> checkMap){
         DesiredCapabilities cap = new DesiredCapabilities();
         AndroidDriver driver = null;
         String apkPath = "D:\\SicongChen\\UnshareFiles\\Workspace\\JavaWorkspace\\soot-android-static-analysis\\sootOutput\\ServiceTest-V1.apk";
 
+        // 设置appium启动参数
         cap.setCapability("automationName", "uiautomator2");
         cap.setCapability("app", apkPath);
         cap.setCapability("deviceName", "test");
@@ -41,7 +41,8 @@ public class AppiumTest {
         cap.setCapability("appActivity", manifestMap.get("launchActivity").get(0));
         cap.setCapability("unicodeKeyboard", true);
         cap.setCapability("resetKeyboard", true);
-        cap.setCapability("noReset", true);
+        cap.setCapability("autoGrantPermissions", true);
+        cap.setCapability("fullReset", true);
         cap.setCapability("noSign", false);
         cap.setCapability("newCommandTimeout", "30");
 
@@ -72,7 +73,7 @@ public class AppiumTest {
 
             // 分析日志
             LogEntries logEntries = driver.manage().logs().get("logcat");
-            List<String> logcatStringList = new ArrayList<String>();
+            List<String> logcatStringList = new ArrayList<>();
             for (LogEntry logEntry : logEntries) {
                 String logString = logEntry.getMessage();
                 if (logString.contains("SootTest")){

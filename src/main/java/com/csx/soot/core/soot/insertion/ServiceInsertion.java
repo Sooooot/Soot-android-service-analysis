@@ -3,8 +3,6 @@ package com.csx.soot.core.soot.insertion;
 import com.csx.soot.core.soot.util.GlobalUtil;
 import soot.*;
 import soot.jimple.*;
-import soot.jimple.internal.ImmediateBox;
-import soot.jimple.internal.JimpleLocalBox;
 import soot.util.Chain;
 
 import java.util.HashMap;
@@ -19,18 +17,21 @@ import java.util.Map;
  *
  * @author Zwiebeln_Chan
  * @version V1.0
- * @date 2019/6/2 13:13
  */
 public class ServiceInsertion {
 
-    private static String insertString;
+    private String insertString;
 
-    public static void serviceInsertion(final Map<String, List<String>> manifestMap, final Map<String, String> checkMap) {
-        final Map<String, String> methodMap = new HashMap<String, String>();
+    public void serviceInsertion(final Map<String, List<String>> manifestMap, final Map<String, String> checkMap) {
+        final Map<String, String> methodMap = new HashMap<>();
         PackManager.v().getPack("jtp").add(new Transform("jtp.my.service.insertion", new BodyTransformer() {
             @Override
             protected void internalTransform(Body body, String s, Map<String, String> map) {
-                if (manifestMap.get("services").contains(body.getMethod().getDeclaringClass().getName())) {
+                String className = body.getMethod().getDeclaringClass().getName();
+                if (className.lastIndexOf("$") > -1) {
+                    className = className.substring(0, className.lastIndexOf("$"));
+                }
+                if (manifestMap.get("services").contains(className)) {
 
                     System.out.println("Find service: " + body.getMethod().getDeclaringClass().getName());
                     System.out.println("Inserting: " + body.getMethod().getName());
@@ -41,18 +42,18 @@ public class ServiceInsertion {
                     for (Unit unit : units) {
                         if (!((unit instanceof IdentityStmt) || (unit instanceof AssignStmt))) {
                             // 插装ENTERED语句
-                            insertString = "SootTest: " + body.getMethod().getDeclaringClass().getName()
+                            insertString = body.getMethod().getDeclaringClass().getName()
                                     + "." + body.getMethod().getName() + " ENTERED";
-                            GlobalUtil.insertSystemOut(insertString, body, unit);
+                            GlobalUtil.insertLogOut(insertString, body, unit);
                             break;
                         }
 
                     }
 
                     // 插装FINISHED语句
-                    insertString = "SootTest: " + body.getMethod().getDeclaringClass().getName()
+                    insertString = body.getMethod().getDeclaringClass().getName()
                             + "." + body.getMethod().getName() + " FINISHED";
-                    GlobalUtil.insertSystemOut(insertString, body, units.getLast());
+                    GlobalUtil.insertLogOut(insertString, body, units.getLast());
 
                     checkMap.put(body.getMethod().getDeclaringClass().getName() + "." + body.getMethod().getName(), "UNREACHED");
 
