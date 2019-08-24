@@ -3,14 +3,13 @@ package com.csx.soot.core.appium;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ws.StringWebSocketClient;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import io.appium.java_client.android.AndroidElement;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -30,17 +29,19 @@ public class AppiumTest {
     public static void startTest(Map<String, List<String>> manifestMap, Map<String, String> checkMap) throws Exception{
         DesiredCapabilities cap = new DesiredCapabilities();
         AndroidDriver driver = null;
+        String apkPath = "D:\\SicongChen\\UnshareFiles\\Workspace\\JavaWorkspace\\soot-android-static-analysis\\sootOutput\\ServiceTest-V1.apk";
 
         cap.setCapability("automationName", "uiautomator2");
-        cap.setCapability("app", "D:\\ServiceTest-V1-new.apk");
+        cap.setCapability("app", apkPath);
         cap.setCapability("deviceName", "test");
         cap.setCapability("platformName", "Android");
         cap.setCapability("platformVersion", "9.0");
         cap.setCapability("udid", "192.168.194.102:5555");
-        cap.setCapability("appPackage", "com.example.jyunmauchan.startservicetest");
-        cap.setCapability("appActivity", ".MainActivity");
+        cap.setCapability("appPackage", manifestMap.get("package").get(0));
+        cap.setCapability("appActivity", manifestMap.get("launchActivity").get(0));
         cap.setCapability("unicodeKeyboard", true);
         cap.setCapability("resetKeyboard", true);
+        cap.setCapability("noReset", true);
         cap.setCapability("noSign", false);
         cap.setCapability("newCommandTimeout", "30");
 
@@ -53,35 +54,36 @@ public class AppiumTest {
         }
 
         if (driver != null) {
-            // TODO 遍历
+
             for (String activityPackageString : manifestMap.get("activities")) {
-                String[] packageAndName = new String[2];
-                int lastDot = activityPackageString.lastIndexOf(".");
-                packageAndName[0] = activityPackageString.substring(0, lastDot);
-                packageAndName[1] = activityPackageString.substring(lastDot + 1);
-                driver.startActivity(new Activity(packageAndName[0], packageAndName[1]));
+                try{
+                    Activity activity = new Activity(manifestMap.get("package").get(0), activityPackageString);
+                    driver.startActivity(activity);
 
-                List<MobileElement> clickableList = driver.findElementsByClassName("android.view.View");
-
-                for (MobileElement mobileElement : clickableList) {
-                    mobileElement.click();
+                    List elements = driver.findElementsByXPath("//android.widget.Button[@clickable='true']");
+                    for (Object element : elements) {
+                        AndroidElement androidElement = (AndroidElement) element;
+                        androidElement.click();
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
             }
-            // TODO 暂停一段时间
-
 
             // 分析日志
             LogEntries logEntries = driver.manage().logs().get("logcat");
+            List<String> logcatStringList = new ArrayList<String>();
             for (LogEntry logEntry : logEntries) {
                 String logString = logEntry.getMessage();
                 if (logString.contains("SootTest")){
+                    System.out.println(logString);
                     String[] strings = logString.split(" ");
                     checkMap.put(strings[1], strings[2]);
+                    logcatStringList.add(logString);
                 }
             }
+            System.out.println();
         }
-
-        System.out.println("Checking rates: ");
 
 
     }

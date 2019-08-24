@@ -1,5 +1,6 @@
 package com.csx.soot.core.soot.insertion;
 
+import com.csx.soot.core.soot.util.GlobalUtil;
 import soot.*;
 import soot.jimple.Stmt;
 import soot.jimple.internal.ImmediateBox;
@@ -44,7 +45,10 @@ public class ActivityInsertion {
 
                                         // TODO: 根据Intent不同的构造方法，去进行不同的参数判断。目前只提供了MainActivity里的一种判断
                                         for (Value arg : invokingArgs) {
+
+                                            // 此处是Intent调用
                                             if (arg.getType().toString().equals("android.content.Intent")) {
+                                                System.out.println(stmt.getInvokeExpr().getMethod().toString());
                                                 String argName = arg.toString();
                                                 System.out.println(argName);
                                                 for (Unit searchingUnit : bodyUnits) {
@@ -78,6 +82,10 @@ public class ActivityInsertion {
                                     }
                                 }
                             }
+                        }
+                        for (Unit unit : insertMap.keySet()) {
+                            GlobalUtil.insertSystemOut("SootTest: " + body.getMethod().getDeclaringClass().getName()
+                                    + "." + body.getMethod().getName() + " INVOKED", body, unit);
                         }
                         body.validate();
                     }

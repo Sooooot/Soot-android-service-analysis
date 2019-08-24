@@ -47,8 +47,8 @@ public class SootCore{
         Map<String, List<String>> manifestMap = ManifestChecker.getManifest(apkPath);
 
         // 服务插装
-        checkMap = ServiceInsertion.serviceInsertion(manifestMap);
-        // ActivityInsertion.activityCheck(manifestMap);
+        ServiceInsertion.serviceInsertion(manifestMap, checkMap);
+        ActivityInsertion.activityCheck(manifestMap);
         // SootServiceMethodInsertion.activityCheck(map);
 
         // 执行soot并输出

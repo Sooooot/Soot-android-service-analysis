@@ -1,7 +1,9 @@
 package com.csx.soot.core.soot.util;
 
 import soot.*;
+import soot.jimple.InvokeStmt;
 import soot.jimple.Jimple;
+import soot.jimple.StaticInvokeExpr;
 import soot.jimple.StringConstant;
 import soot.util.Chain;
 
@@ -37,12 +39,16 @@ public class GlobalUtil {
     public static void insertSystemOut(String insertString, Body body, Unit unit) {
 
         Chain<Unit> units = body.getUnits();
-
-        Local IORef = addTmpRef(body);
-        Local stringRef = addTmpString(body);
-        units.insertBefore(Jimple.v().newAssignStmt(stringRef, StringConstant.v(insertString)), unit);
-        units.insertBefore(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(IORef,
-                SYSTEM_OUT_TO_CALL.makeRef()
-                , stringRef)), unit);
+        SootClass logClass = Scene.v().getSootClass("android.util.Log");
+        SootMethod sootMethod=logClass.getMethod("int i(java.lang.String,java.lang.String)");
+        StaticInvokeExpr staticInvokeExpr=Jimple.v()
+                .newStaticInvokeExpr(sootMethod.makeRef(),StringConstant.v("SootTest: "),StringConstant.v(insertString));
+        InvokeStmt invokeStmt = Jimple.v().newInvokeStmt(staticInvokeExpr);
+        units.insertBefore(invokeStmt, unit);
+//        Local IORef = addTmpRef(body);
+//        Local stringRef = addTmpString(body);
+//        units.insertBefore(Jimple.v().newAssignStmt(stringRef, StringConstant.v(insertString)), unit);
+//        units.insertBefore(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(IORef,
+//                SYSTEM_OUT_TO_CALL.makeRef(), stringRef)), unit);
     }
 }

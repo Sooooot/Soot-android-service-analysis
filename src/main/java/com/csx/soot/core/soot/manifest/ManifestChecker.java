@@ -3,10 +3,7 @@ package com.csx.soot.core.soot.manifest;
 import soot.jimple.infoflow.android.axml.AXmlNode;
 import soot.jimple.infoflow.android.manifest.ProcessManifest;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>Title: ManifestChecher</p>
@@ -24,7 +21,6 @@ public class ManifestChecker {
         Map<String, List<String>> result = new HashMap<String, List<String>>();
         try{
             ProcessManifest processManifest = new ProcessManifest(apkPath);
-
             //获取包名
             //System.out.println(processManifest.getManifest().getAttribute("package"));
             List<String> packageList = new LinkedList<String>();
@@ -35,6 +31,18 @@ public class ManifestChecker {
             List<String> activityList = new LinkedList<String>();
             for (AXmlNode activity : processManifest.getActivities()) {
                 activityList.add(activity.getAttribute("name").getValue().toString());
+                List<AXmlNode> intentFilter = activity.getChildrenWithTag("intent-filter");
+                if (intentFilter.size() > 0) {
+                    String action = intentFilter.get(0).getChildrenWithTag("action").get(0).getAttribute("name").getValue().toString();
+                    String category = intentFilter.get(0).getChildrenWithTag("category").get(0).getAttribute("name").getValue().toString();
+                    if("android.intent.action.MAIN".equals(action) && "android.intent.category.LAUNCHER".equals(category)){
+                        List<String> launchActivityList = new ArrayList<String>();
+                        launchActivityList.add(activity.getAttribute("name").getValue().toString());
+                        result.put("launchActivity", launchActivityList);
+                    }
+                }
+
+
             }
             result.put("activities", activityList);
 

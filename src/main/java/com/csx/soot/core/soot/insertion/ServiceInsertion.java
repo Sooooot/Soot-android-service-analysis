@@ -25,7 +25,7 @@ public class ServiceInsertion {
 
     private static String insertString;
 
-    public static Map<String, String> serviceInsertion(final Map<String, List<String>> manifestMap) {
+    public static void serviceInsertion(final Map<String, List<String>> manifestMap, final Map<String, String> checkMap) {
         final Map<String, String> methodMap = new HashMap<String, String>();
         PackManager.v().getPack("jtp").add(new Transform("jtp.my.service.insertion", new BodyTransformer() {
             @Override
@@ -37,7 +37,6 @@ public class ServiceInsertion {
 
                     //获取一个方法体内的所有语句
                     Chain<Unit> units = body.getUnits();
-
 
                     for (Unit unit : units) {
                         if (!((unit instanceof IdentityStmt) || (unit instanceof AssignStmt))) {
@@ -55,14 +54,13 @@ public class ServiceInsertion {
                             + "." + body.getMethod().getName() + " FINISHED";
                     GlobalUtil.insertSystemOut(insertString, body, units.getLast());
 
-                    methodMap.put(body.getMethod().getDeclaringClass().getName() + "." + body.getMethod().getName(), "UNREACHED");
+                    checkMap.put(body.getMethod().getDeclaringClass().getName() + "." + body.getMethod().getName(), "UNREACHED");
 
                     //验证注入是否合法，否则不准许执行
                     body.validate();
                 }
             }
         }));
-        return methodMap;
     }
 
 
