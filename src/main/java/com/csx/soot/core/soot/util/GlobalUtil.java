@@ -25,7 +25,7 @@ public class GlobalUtil {
         SootClass logClass = Scene.v().getSootClass("android.util.Log");
         SootMethod sootMethod=logClass.getMethod("int i(java.lang.String,java.lang.String)");
         StaticInvokeExpr staticInvokeExpr=Jimple.v()
-                .newStaticInvokeExpr(sootMethod.makeRef(),StringConstant.v("SootTest: "),StringConstant.v(insertString));
+                .newStaticInvokeExpr(sootMethod.makeRef(),StringConstant.v("SootTest"),StringConstant.v(insertString));
         InvokeStmt invokeStmt = Jimple.v().newInvokeStmt(staticInvokeExpr);
         units.insertBefore(invokeStmt, unit);
     }

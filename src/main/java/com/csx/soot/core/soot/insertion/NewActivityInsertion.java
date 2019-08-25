@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class NewActivityInsertion {
 
-    public void activityInsertion(final Map<String, List<String>> manifestMap) {
+    public void activityInsertion(final Map<String, List<String>> manifestMap, final Map<String, String> activityCheckMap) {
         PackManager.v().getPack("jtp").add(
                 new Transform("jtp.my.activity.insertion", new BodyTransformer() {
                     @Override
@@ -42,6 +42,9 @@ public class NewActivityInsertion {
                             if(insertionMap.size() > 0){
                                 System.out.println("Find Activity: " + body.getMethod().getDeclaringClass().getName());
                                 System.out.println("Inserting: " + body.getMethod().getName());
+                                activityCheckMap.put(
+                                        body.getMethod().getDeclaringClass().getName() + "#" + body.getMethod().getName(),
+                                        "UNREACHED");
                                 logInsertion(body, insertionMap);
                             }
                             body.validate();
@@ -177,7 +180,7 @@ public class NewActivityInsertion {
     private void logInsertion(Body body, Map<JInvokeStmt, String> serviceMap) {
         serviceMap.forEach((key, value) -> {
             String insertString = body.getMethod().getDeclaringClass().getName()
-                    + "." + body.getMethod().getName() + " -> " + value + " INVOKED";
+                    + "#" + body.getMethod().getName() + " -> " + value + " @INVOKED";
             GlobalUtil.insertLogOut(insertString, body, key);
         });
     }

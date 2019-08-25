@@ -22,15 +22,15 @@ public class TestStarter {
         String apkPath = "D:\\ServiceTest-V1.apk";
 
         // 静态分析阶段
-        // Map<String, List<String>> map = ManifestChecker.getManifest(apkPath);
         SootCore sootCore = new SootCore();
+        Map<String, String> activityCheckMap = new HashMap<>();
+        Map<String, String> serviceCheckMap = new HashMap<>();
 
         // 获取manifestMap并产生app文件
-        Map<String, String> checkMap = new HashMap<>();
-        Map<String, List<String>> manifestMap = sootCore.runSoot(apkPath, checkMap);
+        Map<String, List<String>> manifestMap = sootCore.runSoot(apkPath, serviceCheckMap, activityCheckMap);
 
         // 动态分析阶段
-        AppiumTest.startTest(manifestMap, checkMap);
+        AppiumTest.startTest(manifestMap, serviceCheckMap, activityCheckMap);
 
     }
 }

@@ -9,7 +9,6 @@ import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +24,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class AppiumTest {
 
-    public static void startTest(Map<String, List<String>> manifestMap, Map<String, String> checkMap){
+    public static void startTest(Map<String, List<String>> manifestMap,
+                                 Map<String, String> serviceCheckMap,
+                                 Map<String, String> activityCheckMap){
         DesiredCapabilities cap = new DesiredCapabilities();
         AndroidDriver driver = null;
         String apkPath = "D:\\SicongChen\\UnshareFiles\\Workspace\\JavaWorkspace\\soot-android-static-analysis\\sootOutput\\ServiceTest-V1.apk";
@@ -55,7 +56,7 @@ public class AppiumTest {
         }
 
         if (driver != null) {
-
+            long startTime = System.currentTimeMillis();
             for (String activityPackageString : manifestMap.get("activities")) {
                 try{
                     Activity activity = new Activity(manifestMap.get("package").get(0), activityPackageString);
@@ -73,17 +74,54 @@ public class AppiumTest {
 
             // 分析日志
             LogEntries logEntries = driver.manage().logs().get("logcat");
-            List<String> logcatStringList = new ArrayList<>();
             for (LogEntry logEntry : logEntries) {
                 String logString = logEntry.getMessage();
                 if (logString.contains("SootTest")){
-                    System.out.println(logString);
-                    String[] strings = logString.split(" ");
-                    checkMap.put(strings[1], strings[2]);
-                    logcatStringList.add(logString);
+                    if (logEntry.getTimestamp() > startTime) {
+                        System.out.println(logString);
+                        String message = logString.split("SootTest:")[1];
+                        if (message.lastIndexOf("->") > -1) {
+                            String[] splitString = message.split("->");
+                            String activityIdName = splitString[0].trim();
+                            String status = splitString[1].trim().split("@")[1].trim();
+                            if (activityCheckMap.containsKey(activityIdName)) {
+                                activityCheckMap.put(activityIdName, status);
+                            }
+                        }
+                        else{
+                            String[] splitString = message.split("@");
+                            String serviceIdName = splitString[0].trim();
+                            String status = splitString[1].trim();
+                            if (serviceCheckMap.containsKey(serviceIdName)) {
+                                serviceCheckMap.put(serviceIdName, status);
+                            }
+                        }
+                    }
                 }
             }
-            System.out.println();
+
+
+            // 打印检查结果
+            System.out.println("=============== ACTIVITY CHECK RESULT START ===============");
+            activityCheckMap.forEach((key, value) -> System.out.println(key + " -> " + value));
+            System.out.println("=============== ACTIVITY CHECK RESULT END ===============");
+
+            System.out.println("=============== SERVICE CHECK RESULT START ===============");
+            serviceCheckMap.forEach((key, value) -> System.out.println(key + " -> " + value));
+            System.out.println("=============== SERVICE CHECK RESULT END ===============");
+
+            int activityFinishCount = 0;
+            int serviceFinishCount = 0;
+            for (String value : activityCheckMap.values()) {
+                if("INVOKED".equals(value)) activityFinishCount++;
+            }
+            for (String value : serviceCheckMap.values()) {
+                if("FINISHED".equals(value)) serviceFinishCount++;
+            }
+            System.out.println("=============== CHECK RATIO ===============");
+            System.out.println("ACTIVITY: " + ((float)activityFinishCount / (float)activityCheckMap.size()));
+            System.out.println("SERVICE: " + ((float)serviceFinishCount / (float)serviceCheckMap.size()));
+
         }
 
 

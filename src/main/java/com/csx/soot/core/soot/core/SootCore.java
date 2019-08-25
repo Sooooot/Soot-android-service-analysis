@@ -37,7 +37,9 @@ public class SootCore{
         Scene.v().loadNecessaryClasses();
     }
 
-    public Map<String, List<String>> runSoot(String apkPath, Map<String, String> checkMap){
+    public Map<String, List<String>> runSoot(String apkPath,
+                                             Map<String, String> serviceCheckMap,
+                                             Map<String, String> activityCheckMap){
 
         // 初始化Soot
         sootInit();
@@ -49,9 +51,9 @@ public class SootCore{
         ServiceInsertion serviceInsertion = new ServiceInsertion();
 
         // Activity插装
-        newActivityInsertion.activityInsertion(manifestMap);
+        newActivityInsertion.activityInsertion(manifestMap, activityCheckMap);
         // Service插装
-        serviceInsertion.serviceInsertion(manifestMap, checkMap);
+        serviceInsertion.serviceInsertion(manifestMap, serviceCheckMap);
 
         // 执行soot并输出
         PackManager.v().runPacks();

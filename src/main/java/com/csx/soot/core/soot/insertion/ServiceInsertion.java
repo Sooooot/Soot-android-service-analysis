@@ -5,7 +5,6 @@ import soot.*;
 import soot.jimple.*;
 import soot.util.Chain;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +21,7 @@ public class ServiceInsertion {
 
     private String insertString;
 
-    public void serviceInsertion(final Map<String, List<String>> manifestMap, final Map<String, String> checkMap) {
-        final Map<String, String> methodMap = new HashMap<>();
+    public void serviceInsertion(final Map<String, List<String>> manifestMap, final Map<String, String> serviceCheckMap) {
         PackManager.v().getPack("jtp").add(new Transform("jtp.my.service.insertion", new BodyTransformer() {
             @Override
             protected void internalTransform(Body body, String s, Map<String, String> map) {
@@ -43,7 +41,7 @@ public class ServiceInsertion {
                         if (!((unit instanceof IdentityStmt) || (unit instanceof AssignStmt))) {
                             // 插装ENTERED语句
                             insertString = body.getMethod().getDeclaringClass().getName()
-                                    + "." + body.getMethod().getName() + " ENTERED";
+                                    + "." + body.getMethod().getName() + " @ENTERED";
                             GlobalUtil.insertLogOut(insertString, body, unit);
                             break;
                         }
@@ -52,16 +50,17 @@ public class ServiceInsertion {
 
                     // 插装FINISHED语句
                     insertString = body.getMethod().getDeclaringClass().getName()
-                            + "." + body.getMethod().getName() + " FINISHED";
+                            + "#" + body.getMethod().getName() + " @FINISHED";
                     GlobalUtil.insertLogOut(insertString, body, units.getLast());
-
-                    checkMap.put(body.getMethod().getDeclaringClass().getName() + "." + body.getMethod().getName(), "UNREACHED");
-
+                    serviceCheckMap.put(
+                            body.getMethod().getDeclaringClass().getName() + "#" + body.getMethod().getName(),
+                            "UNREACHED");
                     //验证注入是否合法，否则不准许执行
                     body.validate();
                 }
             }
         }));
+
     }
 
 
