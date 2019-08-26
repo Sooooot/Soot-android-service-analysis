@@ -16,16 +16,17 @@ import soot.util.Chain;
  * @author Zwiebeln_Chan
  * @version V1.0
  */
-public class GlobalUtil {
+public class GlobalUtil{
 
     // 插装log
-    public static void insertLogOut(String insertString, Body body, Unit unit) {
+    public static void insertLogOut(String insertString, Body body, Unit unit){
 
         Chain<Unit> units = body.getUnits();
         SootClass logClass = Scene.v().getSootClass("android.util.Log");
-        SootMethod sootMethod=logClass.getMethod("int i(java.lang.String,java.lang.String)");
-        StaticInvokeExpr staticInvokeExpr=Jimple.v()
-                .newStaticInvokeExpr(sootMethod.makeRef(),StringConstant.v("SootTest"),StringConstant.v(insertString));
+        SootMethod sootMethod = logClass.getMethod("int i(java.lang.String,java.lang.String)");
+        StaticInvokeExpr staticInvokeExpr = Jimple.v().newStaticInvokeExpr(sootMethod.makeRef(),
+                                                                           StringConstant.v("SootTest"),
+                                                                           StringConstant.v(insertString));
         InvokeStmt invokeStmt = Jimple.v().newInvokeStmt(staticInvokeExpr);
         units.insertBefore(invokeStmt, unit);
     }

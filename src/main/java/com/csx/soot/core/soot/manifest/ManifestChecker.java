@@ -14,10 +14,11 @@ import java.util.*;
  * @author Zwiebeln_Chan
  * @version V1.0
  */
-public class ManifestChecker {
+public class ManifestChecker{
 
     /**
      * @param apkPath apk安装包路径
+     *
      * @return Manifest分析结果，包含：package、launchActivity、activities、services
      */
     public static Map<String, List<String>> getManifest(String apkPath){
@@ -34,15 +35,18 @@ public class ManifestChecker {
             // 获取Activity列表
             //System.out.println(processManifest.getActivities());
             List<String> activityList = new LinkedList<>();
-            for (AXmlNode activity : processManifest.getActivities()) {
+            for (AXmlNode activity : processManifest.getActivities()){
                 activityList.add(activity.getAttribute("name").getValue().toString());
 
                 // 寻找MAIN Activity
                 List<AXmlNode> intentFilter = activity.getChildrenWithTag("intent-filter");
-                if (intentFilter.size() > 0) {
-                    String action = intentFilter.get(0).getChildrenWithTag("action").get(0).getAttribute("name").getValue().toString();
-                    String category = intentFilter.get(0).getChildrenWithTag("category").get(0).getAttribute("name").getValue().toString();
-                    if("android.intent.action.MAIN".equals(action) && "android.intent.category.LAUNCHER".equals(category)){
+                if (intentFilter.size() > 0){
+                    String action = intentFilter.get(0).getChildrenWithTag("action").get(0).getAttribute("name")
+                                                .getValue().toString();
+                    String category = intentFilter.get(0).getChildrenWithTag("category").get(0).getAttribute("name")
+                                                  .getValue().toString();
+                    if ("android.intent.action.MAIN".equals(action) &&
+                        "android.intent.category.LAUNCHER".equals(category)){
                         List<String> launchActivityList = new ArrayList<>();
                         launchActivityList.add(activity.getAttribute("name").getValue().toString());
                         result.put("launchActivity", launchActivityList);
@@ -56,7 +60,7 @@ public class ManifestChecker {
             // 获取Service列表
             // System.out.println(processManifest.getServices());
             List<String> serviceList = new LinkedList<>();
-            for (AXmlNode service : processManifest.getServices()) {
+            for (AXmlNode service : processManifest.getServices()){
                 serviceList.add(service.getAttribute("name").getValue().toString());
             }
             result.put("services", serviceList);

@@ -1,5 +1,6 @@
 package com.csx.soot.core.appium;
 
+import com.csx.soot.core.utils.GlobalSettings;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
@@ -22,18 +23,16 @@ import java.util.concurrent.TimeUnit;
  * @author Zwiebeln_Chan
  * @version V1.0
  */
-public class AppiumTest {
+public class AppiumTest{
 
-    public static void startTest(Map<String, List<String>> manifestMap,
-                                 Map<String, String> serviceCheckMap,
+    public static void startTest(Map<String, List<String>> manifestMap, Map<String, String> serviceCheckMap,
                                  Map<String, String> activityCheckMap){
         DesiredCapabilities cap = new DesiredCapabilities();
         AndroidDriver driver = null;
-        String apkPath = "D:\\SicongChen\\UnshareFiles\\Workspace\\JavaWorkspace\\soot-android-static-analysis\\sootOutput\\ServiceTest-V1.apk";
 
         // 设置appium启动参数
         cap.setCapability("automationName", "uiautomator2");
-        cap.setCapability("app", apkPath);
+        cap.setCapability("app", GlobalSettings.APPIUM_INSTALL_APK_PATH);
         cap.setCapability("deviceName", "test");
         cap.setCapability("platformName", "Android");
         cap.setCapability("platformVersion", "9.0");
@@ -55,15 +54,15 @@ public class AppiumTest {
             e.printStackTrace();
         }
 
-        if (driver != null) {
+        if (driver != null){
             long startTime = System.currentTimeMillis();
-            for (String activityPackageString : manifestMap.get("activities")) {
+            for (String activityPackageString : manifestMap.get("activities")){
                 try{
                     Activity activity = new Activity(manifestMap.get("package").get(0), activityPackageString);
                     driver.startActivity(activity);
 
                     List elements = driver.findElementsByXPath("//android.widget.Button[@clickable='true']");
-                    for (Object element : elements) {
+                    for (Object element : elements){
                         AndroidElement androidElement = (AndroidElement) element;
                         androidElement.click();
                     }
@@ -74,25 +73,24 @@ public class AppiumTest {
 
             // 分析日志
             LogEntries logEntries = driver.manage().logs().get("logcat");
-            for (LogEntry logEntry : logEntries) {
+            for (LogEntry logEntry : logEntries){
                 String logString = logEntry.getMessage();
                 if (logString.contains("SootTest")){
-                    if (logEntry.getTimestamp() > startTime) {
+                    if (logEntry.getTimestamp() > startTime){
                         System.out.println(logString);
                         String message = logString.split("SootTest:")[1];
-                        if (message.lastIndexOf("->") > -1) {
+                        if (message.lastIndexOf("->") > -1){
                             String[] splitString = message.split("->");
                             String activityIdName = splitString[0].trim();
                             String status = splitString[1].trim().split("@")[1].trim();
-                            if (activityCheckMap.containsKey(activityIdName)) {
+                            if (activityCheckMap.containsKey(activityIdName)){
                                 activityCheckMap.put(activityIdName, status);
                             }
-                        }
-                        else{
+                        } else{
                             String[] splitString = message.split("@");
                             String serviceIdName = splitString[0].trim();
                             String status = splitString[1].trim();
-                            if (serviceCheckMap.containsKey(serviceIdName)) {
+                            if (serviceCheckMap.containsKey(serviceIdName)){
                                 serviceCheckMap.put(serviceIdName, status);
                             }
                         }
@@ -112,16 +110,15 @@ public class AppiumTest {
 
             int activityFinishCount = 0;
             int serviceFinishCount = 0;
-            for (String value : activityCheckMap.values()) {
-                if("INVOKED".equals(value)) activityFinishCount++;
+            for (String value : activityCheckMap.values()){
+                if ("INVOKED".equals(value)) activityFinishCount++;
             }
-            for (String value : serviceCheckMap.values()) {
-                if("FINISHED".equals(value)) serviceFinishCount++;
+            for (String value : serviceCheckMap.values()){
+                if ("FINISHED".equals(value)) serviceFinishCount++;
             }
             System.out.println("=============== CHECK RATIO ===============");
-            System.out.println("ACTIVITY: " + ((float)activityFinishCount / (float)activityCheckMap.size()));
-            System.out.println("SERVICE: " + ((float)serviceFinishCount / (float)serviceCheckMap.size()));
-
+            System.out.println("ACTIVITY: " + ((float) activityFinishCount / (float) activityCheckMap.size()));
+            System.out.println("SERVICE: " + ((float) serviceFinishCount / (float) serviceCheckMap.size()));
         }
 
 
