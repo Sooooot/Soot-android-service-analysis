@@ -47,7 +47,6 @@ public class ServiceInsertion{
                             GlobalUtil.insertLogOut(insertString, body, unit);
                             break;
                         }
-
                     }
 
                     // 插装FINISHED语句

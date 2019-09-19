@@ -18,7 +18,7 @@ public class GlobalSettings{
     /**
      * Soot所要处理的单个APK的位置
      */
-    public static final String SOOT_PARSE_APK_PATH = "D:\\ServiceTest-V1.apk";
+    public static final String SOOT_PARSE_APK_PATH = "D:\\soot-test-apk.apk";
 
     /**
      * Soot批处理的APKs存放目录
@@ -35,7 +35,7 @@ public class GlobalSettings{
      */
     public static final String APPIUM_INSTALL_APK_PATH =
             "D:\\SicongChen\\UnshareFiles\\Workspace\\JavaWorkspace\\soot-android-static-analysis\\sootOutput" +
-            "\\ServiceTest-V1.apk";
+            "\\soot-test-apk.apk";
 
     /**
      * Appium批处理的APKs存放目录

@@ -24,10 +24,10 @@ import java.util.Map;
 public class SootCore{
 
     private static void sootInit(){
-        Options.v().set_allow_phantom_refs(true);//设置允许伪类（Phantom class），指的是soot为那些在其classpath找不到的类建立的模型
-        Options.v().set_prepend_classpath(true);//prepend the VM's classpath to Soot's own classpath
-        Options.v().set_output_format(Options.output_format_dex);//设置soot的输出格式
-        Options.v().set_android_jars(GlobalSettings.ANDROID_SDK_PATH);//设置android jar包路径
+        Options.v().set_allow_phantom_refs(true);// 设置允许伪类（Phantom class），指的是soot为那些在其classpath找不到的类建立的模型
+        Options.v().set_prepend_classpath(true);// prepend the VM's classpath to Soot's own classpath
+        Options.v().set_output_format(Options.output_format_dex);// 设置soot的输出格式
+        Options.v().set_android_jars(GlobalSettings.ANDROID_SDK_PATH);// 设置android jar包路径
         Options.v().set_src_prec(Options.src_prec_apk);
         Options.v().set_process_multiple_dex(true);
         Options.v().set_force_overwrite(true);

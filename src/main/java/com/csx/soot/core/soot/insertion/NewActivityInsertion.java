@@ -49,16 +49,6 @@ public class NewActivityInsertion{
                     }
                     body.validate();
                 }
-
-                // 调试用例
-//                        if (body.getMethod().getDeclaringClass().getName().contains("BindActivity") &&
-//                            body.getMethod().getName().contains("onClick")) {
-//                            List<JInvokeStmt> invokeExprList = searchForServiceInvoked(body);
-//                            Map<JInvokeStmt, String> intentMap = searchForIntent(invokeExprList);
-//                            Map<JInvokeStmt, String> insertionMap = searchForInvokeServiceName(body, intentMap);
-//                            logInsertion(body, insertionMap);
-//                            body.validate();
-//                        }
             }
         }));
     }

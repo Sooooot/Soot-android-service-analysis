@@ -10,6 +10,7 @@ import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -73,10 +74,14 @@ public class AppiumTest{
 
             // 分析日志
             LogEntries logEntries = driver.manage().logs().get("logcat");
+            List<String> exceptionList = new ArrayList<>();
             for (LogEntry logEntry : logEntries){
                 String logString = logEntry.getMessage();
-                if (logString.contains("SootTest")){
-                    if (logEntry.getTimestamp() > startTime){
+                if (logEntry.getTimestamp() > startTime){
+                    if (logString.contains("Exception")){
+                        exceptionList.add(logString);
+                    }
+                    if (logString.contains("SootTest")){
                         System.out.println(logString);
                         String message = logString.split("SootTest:")[1];
                         if (message.lastIndexOf("->") > -1){
@@ -97,8 +102,6 @@ public class AppiumTest{
                     }
                 }
             }
-
-
             // 打印检查结果
             System.out.println("=============== ACTIVITY CHECK RESULT START ===============");
             activityCheckMap.forEach((key, value) -> System.out.println(key + " -> " + value));
@@ -108,13 +111,21 @@ public class AppiumTest{
             serviceCheckMap.forEach((key, value) -> System.out.println(key + " -> " + value));
             System.out.println("=============== SERVICE CHECK RESULT END ===============");
 
+            System.out.println("=============== EXCEPTION STACK LIST START ===============");
+            exceptionList.forEach(System.out::println);
+            System.out.println("=============== EXCEPTION STACK LIST END ===============");
+
             int activityFinishCount = 0;
             int serviceFinishCount = 0;
             for (String value : activityCheckMap.values()){
-                if ("INVOKED".equals(value)) activityFinishCount++;
+                if ("INVOKED".equals(value)){
+                    activityFinishCount++;
+                }
             }
             for (String value : serviceCheckMap.values()){
-                if ("FINISHED".equals(value)) serviceFinishCount++;
+                if ("FINISHED".equals(value)){
+                    serviceFinishCount++;
+                }
             }
             System.out.println("=============== CHECK RATIO ===============");
             System.out.println("ACTIVITY: " + ((float) activityFinishCount / (float) activityCheckMap.size()));
